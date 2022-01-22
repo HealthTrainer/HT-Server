@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class ReigsterApiController {
 
-    private final ReigsterService loginService;
+    private final ReigsterService reigsterService;
 
    @PostMapping("/auth/sign-up") // 회원가입 처리
    @ResponseBody
-   public String signUp(@RequestBody RegisterDto loginRequestDto){ // 수신
-       log.info("email = {}, password = {}", loginRequestDto.getEmail(),loginRequestDto.getPassword());
-       if(loginService.signUp(loginRequestDto).equals("Success")){
+   public String signUp(@RequestBody RegisterDto registerDto){ // 수신
+       log.info("email = {}, password = {}", registerDto.getEmail(),registerDto.getPassword());
+       if(reigsterService.signUp(registerDto).equals("Success")){
            return "Success";
        }
         return "Fail";

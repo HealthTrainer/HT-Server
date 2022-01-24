@@ -3,6 +3,7 @@ package com.healthtrainer.htserver.web.controller.login;
 import com.healthtrainer.htserver.config.JwtAuthenticationProvider;
 import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.domain.register.UserRepository;
+import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.login.LoginDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ public class LoginApiController {
 
     @PostMapping("/auth/login")
     @ResponseBody
-    public String login(@RequestBody LoginDto user) {
+    public ResponseDto login(@RequestBody LoginDto user) {
         User member = userRepository.findByEmail(user.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 E-MAIL 입니다."));
         if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
@@ -37,7 +38,7 @@ public class LoginApiController {
 
         String token = jwtAuthenticationProvider.createToken(member.getUsername(), member.getRoles());
 
-        return token;
+        return new ResponseDto("SUCCESS",token);
     }
 
 }

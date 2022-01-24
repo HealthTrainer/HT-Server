@@ -29,25 +29,25 @@ public class User implements UserDetails{
     private String picture;
 
     @Column(name = "age")
-    private int age;
+    private Integer age;
 
     @Column(name = "sex")
-    private char sex;
+    private String sex;
 
     @Column(name = "height")
-    private int height;
+    private Integer height;
 
     @Column(name = "weight")
-    private int weight;
+    private Integer weight;
 
     @Column(name = "email")
     private String email;
 
     @Column(name = "profile_state")
-    private char profileState; // 프로필 공개 여부, value = Y or N이기 때문에 Data type이 char형
+    private String profileState; // 프로필 공개 여부, value = Y or N이기 때문에 Data type이 char형
 
     @Column(name = "withdrawl_state")
-    private char withdrawlState; // 탈퇴여부, 기존의 회원이 탈퇴할 경우 value = Y
+    private String withdrawlState; // 탈퇴여부, 기존의 회원이 탈퇴할 경우 value = Y
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
@@ -85,8 +85,8 @@ public class User implements UserDetails{
     }
 
     @Builder
-    public User(String password, String name, String picture, int age, char sex, int height,
-                int weight, String email, char profileState, char withdrawlState, List<String> roles){
+    public User(String password, String name, String picture, Integer age, String sex, Integer height,
+                Integer weight, String email, String profileState, String withdrawlState, List<String> roles){
         this.password = password;
         this.name = name;
         this.picture = picture;
@@ -98,6 +98,16 @@ public class User implements UserDetails{
         this.profileState = profileState;
         this.withdrawlState = withdrawlState;
         this.roles = roles;
+    }
+
+    public void update(User entity) {
+        this.name = entity.getName();
+        this.age = entity.getAge();
+        this.sex = entity.getSex();
+        this.height = entity.getHeight();
+        this.weight = entity.getWeight();
+        this.email = entity.getEmail();
+        this.profileState = entity.getProfileState();
     }
 
 }

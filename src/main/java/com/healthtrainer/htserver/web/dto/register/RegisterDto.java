@@ -19,13 +19,13 @@ public class RegisterDto {
     private String password;
     private String name;
     private String picture;
-    private char sex;
-    private int age;
-    private int height;
-    private int weight;
+    private String sex;
+    private Integer age;
+    private Integer height;
+    private Integer weight;
     private String email;
-    private char profile_state;
-    private char withdrawl_state;
+    private String profile_state;
+    private String withdrawl_state;
     private String roles = "ROLE_USER";
 
      public User toEntity(){

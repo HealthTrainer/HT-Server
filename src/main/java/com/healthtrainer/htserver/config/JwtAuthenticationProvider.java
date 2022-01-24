@@ -6,7 +6,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +24,7 @@ public class JwtAuthenticationProvider {
 
     private String secretKey = "dnlsxjtmxjeldnlsxjtmxjeldnlsxjtmxjeldnlsxjtmxjel";
 
-    private long tokenValidTime = 1000L * 60 * 60;
+    private long tokenValidTime = 1000L * 60 * 60; // 토큰 유효기간 일주일로 바꾸기 30분 x2 x 24 ...
 
     @Autowired
     private UserDetailsService userDetailsService;

@@ -31,7 +31,6 @@ public class ReigsterService {
                             .profileState(loginRequestDto.getProfile_state())
                             .withdrawlState(loginRequestDto.getWithdrawl_state())
                             .build());
-
             return "Success";
         }
         catch (Exception e){

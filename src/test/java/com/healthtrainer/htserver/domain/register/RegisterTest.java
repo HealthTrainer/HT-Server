@@ -19,13 +19,13 @@ public class RegisterTest {
         String password = "test2";
         String name = "박상권2";
         String picture = "test2";
-        int age = 1;
-        char sex = 'M';
-        int height = 1;
-        int weight = 1;
+        Integer age = 1;
+        String sex = "M";
+        Integer height = 1;
+        Integer weight = 1;
         String email = "test2";
-        char profileState = 'a';
-        char withdrawlState = 'Y';
+        String profileState = "a";
+        String withdrawlState = "Y";
 
         userRepository.save(User.builder()
         .password(password)

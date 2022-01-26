@@ -1,4 +1,5 @@
 package com.healthtrainer.htserver.domain.register;
+import com.healthtrainer.htserver.domain.Follow.Follow;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,11 +13,12 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
-@Table(name = "User")
+@Table(name = "user")
 @Entity
 public class User implements UserDetails{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "password")
@@ -51,6 +53,9 @@ public class User implements UserDetails{
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Follow> followings = new ArrayList<Follow>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -109,5 +114,4 @@ public class User implements UserDetails{
         this.email = entity.getEmail();
         this.profileState = entity.getProfileState();
     }
-
 }

@@ -33,9 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                    .antMatchers("/").permitAll() // css 관련 파일들 접근(사용) 허용(가능)
-                    .antMatchers("/auth/**").permitAll() // auth관련 경로는 모두 접근 허용
-                    .anyRequest().authenticated()
+                    .antMatchers("/**").permitAll() // css 관련 파일들 접근(사용) 허용(가능)
                 .and()
                     .addFilterBefore(new JwtAuthenticationFilter(jwtAuthenticationProvider)
                             ,UsernamePasswordAuthenticationFilter.class);

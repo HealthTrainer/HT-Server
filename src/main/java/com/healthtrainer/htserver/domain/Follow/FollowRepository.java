@@ -1,10 +1,18 @@
 package com.healthtrainer.htserver.domain.Follow;
 
+import com.healthtrainer.htserver.domain.register.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface FollowRepository extends JpaRepository<Follow,Long> {
     /*
-    팔로잉을 한 사람들의 Repository
-    ex) A가 B를 팔로잉하는 경우 A가 이 Repository에 저장
+        FollowRepository에는 follow 객체가 들어옴, follow 객체에 이미 팔로워와 팔로잉 정보가 존재
     */
+
+    Follow findByfEmailAndUser(String fEmail, User user);
+
+
+
+
 }

@@ -15,7 +15,7 @@ public class UserFindResponseDto {
     private Integer height;
     private Integer weight;
     private String email;
-    private String profileState;
+    private boolean profileState;
 
     public UserFindResponseDto(User entity) {
         this.name = entity.getName();
@@ -24,6 +24,20 @@ public class UserFindResponseDto {
         this.height = entity.getHeight();
         this.weight = entity.getWeight();
         this.email = entity.getEmail();
-        this.profileState = entity.getProfileState();
+        this.profileState = toProfileState(entity.getProfileState());
+    }
+
+    private boolean toProfileState(String profileState) {
+        if(profileState!=null){
+            if (profileState.equals("Y")) {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else {
+            return false;
+        }
     }
 }

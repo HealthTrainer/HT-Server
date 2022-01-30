@@ -1,9 +1,11 @@
 package com.healthtrainer.htserver.domain.Follow;
 
 import com.healthtrainer.htserver.domain.register.User;
+import lombok.Getter;
 
 import javax.persistence.*;
 
+@Getter
 @Table(name = "follow")
 @Entity
 public class Follow { // 연관관계 중 주인
@@ -31,5 +33,7 @@ public class Follow { // 연관관계 중 주인
     public void setF_email(String fEmail){
         this.fEmail = fEmail;
     }
+
+
 
 }

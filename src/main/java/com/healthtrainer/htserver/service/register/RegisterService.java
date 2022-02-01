@@ -11,13 +11,16 @@ import java.util.Collections;
 
 @Service
 @AllArgsConstructor
-public class ReigsterService {
+public class RegisterService {
 
     private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
     public String signUp(RegisterDto loginRequestDto){
         try{
+            User user = userRepository.findAllByEmail(loginRequestDto.getEmail());
+            if(user == null){
+
             userRepository.save(User.builder()
                             .password(passwordEncoder.encode(loginRequestDto.getPassword()))
                             .name(loginRequestDto.getName())
@@ -31,7 +34,7 @@ public class ReigsterService {
                             .profileState(loginRequestDto.getProfile_state())
                             .withdrawlState(loginRequestDto.getWithdrawl_state())
                             .build());
-
+        }
             return "Success";
         }
         catch (Exception e){

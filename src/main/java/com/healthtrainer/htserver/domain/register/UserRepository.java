@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User,Long> {
 
     Optional<User> findByEmail(String email);
+    User findAllByEmail(String email); // 이메일이 중복될 경우 사용
 }

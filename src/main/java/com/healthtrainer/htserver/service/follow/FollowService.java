@@ -19,14 +19,14 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     @Transactional
-    public ResponseDto follow(Long id, FollowDto followDto){
+    public ResponseDto follow(Long id, FollowDto followDto){ // id는 팔로잉을 받는 사람
         Follow following = new Follow();
         User user = userRepository.findById(id)
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원 입니다. id=" + id));
 
-        following.setFollowing_email(followDto.getEmail());
+        following.setF_email(followDto.getEmail());
         following.setUser(user);
-        followRepository.save(following); // 팔로잉을 한 사람이 저장
+        followRepository.save(following); // 팔로잉 객체 저장
 
         return new ResponseDto("SUCCESS",followDto);
     }

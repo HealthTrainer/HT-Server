@@ -1,6 +1,6 @@
 package com.healthtrainer.htserver.web.controller.register;
 
-import com.healthtrainer.htserver.service.register.ReigsterService;
+import com.healthtrainer.htserver.service.register.RegisterService;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.register.RegisterDto;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class ReigsterApiController {
+public class RegisterApiController {
 
-    private final ReigsterService reigsterService;
+    private final RegisterService reigsterService;
 
    @PostMapping("/auth/sign-up") // 회원가입 처리
    @ResponseBody

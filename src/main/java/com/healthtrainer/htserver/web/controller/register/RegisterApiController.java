@@ -15,13 +15,10 @@ public class RegisterApiController {
 
     private final RegisterService reigsterService;
 
-   @PostMapping("/auth/sign-up") // 회원가입 처리
-   @ResponseBody
-   public ResponseDto signUp(@RequestBody RegisterDto registerDto){ // 수신
-       log.info("email = {}, password = {}", registerDto.getEmail(),registerDto.getPassword());
-       if(reigsterService.signUp(registerDto).equals("Success")){
-           return new ResponseDto("SUCCESS");
-       }
-        return new ResponseDto("FAIL");
-   }
+    @PostMapping("/auth/sign-up") // 회원가입 처리
+    @ResponseBody
+    public ResponseDto signUp(@RequestBody RegisterDto registerDto) { // 수신
+        log.info("email = {}, password = {}", registerDto.getEmail(), registerDto.getPassword());
+        return reigsterService.signUp(registerDto);
+    }
 }

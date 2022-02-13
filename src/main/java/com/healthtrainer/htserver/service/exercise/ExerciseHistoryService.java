@@ -8,6 +8,8 @@ import com.healthtrainer.htserver.domain.exercise.ExerciseListRepository;
 import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.exercise.ExerciseDto;
+import com.healthtrainer.htserver.web.dto.exercise.FindExerciseHistoryDto;
+import com.healthtrainer.htserver.web.dto.exercise.FindExerciseListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,7 +28,6 @@ public class ExerciseHistoryService {
     private final UserDetailsService userDetailsService;
     private final ExerciseHistoryRepository exerciseHistoryRepository;
     private final ExerciseListRepository exerciseListRepository;
-    private ExerciseList exerciseList;
 
     @Transactional
     public ResponseDto addExerciseHistoryByTitle(ServletRequest request, String title, ExerciseDto exerciseDto) {
@@ -45,19 +47,25 @@ public class ExerciseHistoryService {
 
         exerciseHistoryRepository.save(exerciseHistory);
 
-        return new ResponseDto("SUCCESS", title);
+        List<Object> forReturn = new ArrayList<>();
+
+        FindExerciseHistoryDto temp = new FindExerciseHistoryDto();
+        temp.setExerciseListId(exerciseList.getEListId());
+        temp.setTitle(exerciseList.getTitle());
+        temp.setExerciseHistoryId(exerciseHistory.getHistoryId());
+        temp.setExerciseName(exerciseHistory.getExerciseName());
+
+        forReturn.add(temp);
+
+        return new ResponseDto("SUCCESS", forReturn);
 
     }
-    /*
-    @Transactional
-    public ResponseDto deleteExerciseHistoryByTitle(ServletRequest request, String title, ExerciseDto exerciseDto) {
-        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
-        User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
-        ExerciseList exerciseList = exerciseListRepository.findAllByUserAndTitle(me,title);
-        List<ExerciseHistory> exerciseHistories = exerciseHistoryRepository
-                .findByExerciseListAndExerciseName(exerciseList,title);
-        운동 루틴을 찾고 운동 루틴 안에 있는 여러 운동들은 exerciseHistories에 존재
-        여기서 어떤 운동을 삭제할지는 QueryDsl을 사용해야함(어떤 운동인지를 먼저 찾아야 함)
-    }*/
+    @Transactional
+    public ResponseDto deleteExerciseHistory(Long exerciseId) {
+        ExerciseHistory exerciseHistory = exerciseHistoryRepository.getById(exerciseId);
+        exerciseHistoryRepository.delete(exerciseHistory);
+
+        return new ResponseDto("SUCCESS",exerciseHistory.getExerciseName());
+    }
 }

@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class RegisterApiController {
 
-    private final RegisterService reigsterService;
+    private final RegisterService registerService;
 
     @PostMapping("/auth/sign-up") // 회원가입 처리
     @ResponseBody
     public ResponseDto signUp(@RequestBody RegisterDto registerDto) { // 수신
         log.info("email = {}, password = {}", registerDto.getEmail(), registerDto.getPassword());
-        return reigsterService.signUp(registerDto);
+        return registerService.signUp(registerDto);
+    }
+
+    @GetMapping("/auth/email")
+    @ResponseBody
+    public ResponseDto emailCheck(@RequestBody RegisterDto registerDto){
+        return registerService.emailCheck(registerDto);
     }
 }

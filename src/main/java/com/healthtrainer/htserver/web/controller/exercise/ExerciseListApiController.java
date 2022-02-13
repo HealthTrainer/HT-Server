@@ -4,6 +4,7 @@ import com.healthtrainer.htserver.service.exercise.ExerciseListService;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.exercise.ExerciseDto;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,17 +28,16 @@ public class ExerciseListApiController {
         return exerciseListService.deleteExerciseList(request, title);
     }
 
-
-    @GetMapping("/users/{id}/workout-list/{title}") // 운동리스트 조회
+    @GetMapping("/users/{userId}/workout-list/{title}") // 운동리스트 조회
     @ResponseBody
-    public ResponseDto selectExerciseListByTitle(@PathVariable Long id, @PathVariable String title){
-        return exerciseListService.selectExerciseListByIdAndTitle(id, title);
+    public ResponseDto selectExerciseListByTitle(@PathVariable Long userId, @PathVariable String title){
+        return exerciseListService.selectExerciseListByIdAndTitle(userId, title);
     }
 
-    @GetMapping("/users/{id}/workout-list/all") // 운동리스트 전부 조회
+    @GetMapping("/users/{userId}/workout-list/all") // 운동리스트 전부 조회
     @ResponseBody
-    public ResponseDto selectAllExerciseListB(@PathVariable Long id){
-        return exerciseListService.selectAllExerciseList(id);
+    public ResponseDto selectAllExerciseListB(@PathVariable Long userId){
+        return exerciseListService.selectAllExerciseList(userId);
     }
 
 

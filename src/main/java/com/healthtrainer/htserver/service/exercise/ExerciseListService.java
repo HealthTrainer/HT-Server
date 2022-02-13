@@ -1,7 +1,6 @@
 package com.healthtrainer.htserver.service.exercise;
 
 import com.healthtrainer.htserver.config.JwtAuthenticationProvider;
-import com.healthtrainer.htserver.domain.Follow.Follow;
 import com.healthtrainer.htserver.domain.exercise.ExerciseHistory;
 import com.healthtrainer.htserver.domain.exercise.ExerciseHistoryRepository;
 import com.healthtrainer.htserver.domain.exercise.ExerciseList;
@@ -10,6 +9,7 @@ import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.domain.register.UserRepository;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.exercise.ExerciseDto;
+import com.healthtrainer.htserver.web.dto.exercise.FindExerciseListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -36,12 +35,13 @@ public class ExerciseListService {
         User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         ExerciseList exerciseList = new ExerciseList();
+        // 객체 생성 시점에 id 값도 같이 생성
         exerciseList.seteListTime(exerciseDto.getTime());
         exerciseList.seteListTitle(exerciseDto.getTitle());
         exerciseList.setUser(me);
         exerciseListRepository.save(exerciseList);
 
-        return new ResponseDto("SUCCESS",me.getEmail());
+        return new ResponseDto("SUCCESS",exerciseList.getEListId());
     }
 
     public ResponseDto deleteExerciseList(ServletRequest request, String title) {
@@ -51,7 +51,7 @@ public class ExerciseListService {
         ExerciseList exerciseList = exerciseListRepository.findByUserAndTitle(me,title);
         exerciseListRepository.delete(exerciseList);
 
-        return new ResponseDto("SUCCESS",title);
+        return new ResponseDto("SUCCESS",exerciseList.getEListId());
     }
 
     public ResponseDto selectExerciseListByIdAndTitle(Long id, String title) {
@@ -63,22 +63,26 @@ public class ExerciseListService {
         List<ExerciseHistory> exerciseHistories = new ArrayList<>();
         exerciseHistories = exerciseHistoryRepository.findAllByExerciseList(exerciseList);
 
-        List<ExerciseHistory> forReturn = new ArrayList<>();
+        List<Object> forReturn = new ArrayList<>();
         for (ExerciseHistory e : exerciseHistories) {
-            ExerciseHistory temp = new ExerciseHistory();
+            ExerciseDto temp = new ExerciseDto();
             /* temp 객체는 반복문 안에 존재해야 함 객체의 정보가 계속 바뀌기 때문 */
-
-            temp.setExerciseName(e.getExerciseName());
-            temp.setExerciseType(e.getExerciseType());
-            temp.setExerciseCount(e.getExerciseCount());
-            temp.setExerciseSet(e.getExerciseSet());
-            temp.setExerciseWeight(e.getExerciseWeight());
+            temp.setTitle(exerciseList.getTitle());
+            temp.setTime(exerciseList.getEListTime());
+            temp.setExerciseHistoryId(e.getHistoryId());
+            temp.setCount(e.getExerciseCount());
+            temp.setSet(e.getExerciseSet());
+            temp.setType(e.getExerciseType());
+            temp.setExerciseListId(exerciseList.getEListId());
+            temp.setName(e.getExerciseName());
+            temp.setWeight(e.getExerciseWeight());
 
             forReturn.add(temp);
         }
 
         return new ResponseDto("SUCCESS",forReturn);
     }
+
 
     public ResponseDto selectAllExerciseList(Long id) {
         User user = userRepository.findById(id)
@@ -87,23 +91,16 @@ public class ExerciseListService {
         List<ExerciseList> exerciseLists = new ArrayList<>();
         exerciseLists = exerciseListRepository.findAllByUser(user);
 
-        List<ExerciseHistory> exerciseHistories = new ArrayList<>();
-
         List<Object> forReturn = new ArrayList<>();
-        for(ExerciseList e1 : exerciseLists) {
-            exerciseHistories = exerciseHistoryRepository.findAllByExerciseList(e1);
-            for(ExerciseHistory e2 : exerciseHistories){
-                ExerciseHistory temp = new ExerciseHistory();
-                /* temp 객체는 반복문 안에 존재해야 함 객체의 정보가 계속 바뀌기 때문 */
-                forReturn.add(e1.getTitle());
-                temp.setExerciseName(e2.getExerciseName());
-                temp.setExerciseType(e2.getExerciseType());
-                temp.setExerciseCount(e2.getExerciseCount());
-                temp.setExerciseSet(e2.getExerciseSet());
-                temp.setExerciseWeight(e2.getExerciseWeight());
 
-                forReturn.add(temp);
-            }
+        for(ExerciseList e1 : exerciseLists){
+            FindExerciseListDto temp = new FindExerciseListDto();
+            temp.setExerciseListId(e1.getEListId());
+            temp.setTime(e1.getEListTime());
+            temp.setTitle(e1.getTitle());
+
+            forReturn.add(temp);
+
         }
         return new ResponseDto("SUCCESS",forReturn);
     }

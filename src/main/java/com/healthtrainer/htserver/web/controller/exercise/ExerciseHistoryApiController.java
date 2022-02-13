@@ -23,13 +23,10 @@ public class ExerciseHistoryApiController {
         return exerciseHistoryService.addExerciseHistoryByTitle(request, title, exerciseDto);
     }
 
-    /*
-    @DeleteMapping("/users/workout-list/workout/{title}")
+    @DeleteMapping("/users/{exerciseId}/workout-list/workout")
     @ResponseBody
-    public ResponseDto deleteExerciseHistoryByTitle(ServletRequest request, @PathVariable String title,
-                                                    @RequestBody ExerciseDto exerciseDto){
-        return exerciseHistoryService.deleteExerciseHistoryByTitle(request, title, exerciseDto);
+    public ResponseDto deleteExerciseHistory(@PathVariable Long exerciseId){
+        return exerciseHistoryService.deleteExerciseHistory(exerciseId);
     }
 
-     */
 }

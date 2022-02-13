@@ -18,9 +18,7 @@ public class RegisterService {
     private PasswordEncoder passwordEncoder;
 
     public ResponseDto signUp(RegisterDto loginRequestDto){
-        User user = userRepository.findAllByEmail(loginRequestDto.getEmail());
-        if(user == null){
-            userRepository.save(User.builder()
+        userRepository.save(User.builder()
                     .password(passwordEncoder.encode(loginRequestDto.getPassword()))
                     .name(loginRequestDto.getName())
                     .roles(Collections.singletonList("ROLE_USER"))
@@ -35,6 +33,13 @@ public class RegisterService {
                     .build());
             return new ResponseDto("SUCCESS");
         }
-            return new ResponseDto("FAIL","이메일이 중복됩니다.");
+
+
+    public ResponseDto emailCheck(RegisterDto registerDto){
+        User user = userRepository.findAllByEmail(registerDto.getEmail());
+        if(user == null){
+            return new ResponseDto("SUCCESS","가입 가능한 이메일입니다.");
         }
+        return new ResponseDto("FAIL", "이메일이 중복됩니다.");
+    }
 }

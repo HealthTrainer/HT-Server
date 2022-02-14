@@ -6,6 +6,7 @@ import com.healthtrainer.htserver.domain.Follow.FollowRepository;
 import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.domain.register.UserRepository;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
+import com.healthtrainer.htserver.web.dto.follow.SelectFollowResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -31,12 +33,12 @@ public class SelectFollowService {
         User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         List<Follow> followingsByMe = followRepository.findALLByfEmail(me.getEmail());
-        List<String> emails = new ArrayList<>();
+        List<SelectFollowResponseDto> dtos = new ArrayList<>();
         for (Follow f : followingsByMe) {
             User user = f.getUser();
-            emails.add(user.getEmail());
+            dtos.add(new SelectFollowResponseDto(user));
         }
-        return new ResponseDto("SUCCESS",emails);
+        return new ResponseDto("SUCCESS",dtos);
     }
 
     @ResponseBody
@@ -45,13 +47,16 @@ public class SelectFollowService {
         User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         List<Follow> followerByMe = followRepository.findALLByUser(me);
-        List<String> emails = new ArrayList<>();
+        List<SelectFollowResponseDto> dtos = new ArrayList<>();
 
         for(Follow f : followerByMe){
-            emails.add(f.getFEmail());
+            String email = f.getFEmail();
+            User follower = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 회원은 존재하지 않습니다"));
+            dtos.add(new SelectFollowResponseDto(follower));
         }
 
-        return new ResponseDto("SUCCESS",emails);
+        return new ResponseDto("SUCCESS",dtos);
     }
 
 
@@ -60,11 +65,11 @@ public class SelectFollowService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원은 존재하지 않습니다 id = "+id));
 
         List<Follow> followingsByUser = followRepository.findALLByfEmail(user.getEmail());
-        List<String> emails = new ArrayList<>();
+        List<SelectFollowResponseDto> dtos = new ArrayList<>();
         for (Follow f : followingsByUser) {
-            emails.add(f.getUser().getEmail());
+            dtos.add(new SelectFollowResponseDto(f.getUser()));
         }
-        return new ResponseDto("SUCCESS",emails);
+        return new ResponseDto("SUCCESS",dtos);
     }
 
     public ResponseDto selectFollowerByUser(Long id) {
@@ -72,11 +77,14 @@ public class SelectFollowService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원은 존재하지 않습니다 id = "+id));
 
         List<Follow> followingsByUser = followRepository.findALLByUser(user);
-        List<String> emails = new ArrayList<>();
+        List<SelectFollowResponseDto> dtos = new ArrayList<>();
         for (Follow f : followingsByUser) {
-            emails.add(f.getFEmail());
+            String email = f.getFEmail();
+            User follower = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new IllegalArgumentException("해당 회원은 존재하지 않습니다"));
+            dtos.add(new SelectFollowResponseDto(follower));
         }
-        return new ResponseDto("SUCCESS",emails);
+        return new ResponseDto("SUCCESS",dtos);
 
     }
 }

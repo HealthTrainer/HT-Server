@@ -67,4 +67,11 @@ public class UserService {
             return new ResponseDto("SUCCESS", responseDto);
         }
     }
+
+    public ResponseDto check(ServletRequest request){
+        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
+        User user = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
+
+        return new ResponseDto("SUCCESS",user.getId());
+    }
 }

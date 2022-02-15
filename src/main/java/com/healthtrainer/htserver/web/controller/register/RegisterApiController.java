@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletRequest;
+
 @Controller
 @RequiredArgsConstructor
 @Slf4j
@@ -26,5 +28,11 @@ public class RegisterApiController {
     @ResponseBody
     public ResponseDto emailCheck(@RequestBody RegisterDto registerDto){
         return registerService.emailCheck(registerDto);
+    }
+
+    @DeleteMapping("/auth/sign-out")
+    @ResponseBody
+    public ResponseDto signOut(ServletRequest request){
+        return registerService.signOut(request);
     }
 }

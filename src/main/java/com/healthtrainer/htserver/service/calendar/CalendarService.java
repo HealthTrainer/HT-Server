@@ -11,10 +11,7 @@ import com.healthtrainer.htserver.domain.exercise.ExerciseList;
 import com.healthtrainer.htserver.domain.exercise.ExerciseListRepository;
 import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
-import com.healthtrainer.htserver.web.dto.calendar.CalendarHistoryAllResponseDto;
-import com.healthtrainer.htserver.web.dto.calendar.CalendarHistoryRequestDto;
-import com.healthtrainer.htserver.web.dto.calendar.CalendarHistoryResponseDto;
-import com.healthtrainer.htserver.web.dto.calendar.CalendarRequestDto;
+import com.healthtrainer.htserver.web.dto.calendar.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -117,7 +114,8 @@ public class CalendarService {
                 temp2.add(temp3);
 
 
-                if(c2.getColor().equals("green")){ color_green = color_green + 1; }
+                if(c2.getColor().equals("green")){
+                    color_green = color_green + 1; }
                 else if(c2.getColor().equals("red")){ color_red = color_red + 1; }
             }
 
@@ -132,5 +130,22 @@ public class CalendarService {
         }
 
         return new ResponseDto("SUCCESS",calendarHistoryAllResponseDtos);
+    }
+
+    public ResponseDto findCalendarTime(ServletRequest request) {
+        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
+        User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
+
+        List<Calendar> calendars = calendarRepository.findAllById(me.getId());
+
+        List<Object> forReturn = new ArrayList<>();
+
+        for(Calendar c : calendars){
+            CalendarTimeResponseDto temp = new CalendarTimeResponseDto();
+            temp.setTime(c.getTime());
+            temp.setDate(c.getDate());
+            forReturn.add(temp);
+        }
+        return new ResponseDto("SUCCESS",forReturn);
     }
 }

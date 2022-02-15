@@ -36,4 +36,9 @@ public class CalendarApiController {
         return calendarService.findAllCalendarHistory(request,title);
     }
 
+    @GetMapping("/users/calendar/time")
+    @ResponseBody
+    public ResponseDto findCalendarTime(ServletRequest request){
+        return calendarService.findCalendarTime(request);
+    }
 }

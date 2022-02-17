@@ -1,6 +1,5 @@
 package com.healthtrainer.htserver.domain.register;
 import com.healthtrainer.htserver.domain.Follow.Follow;
-import com.healthtrainer.htserver.domain.group.TeamUser;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -58,10 +57,6 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user")
     private List<Follow> followings = new ArrayList<Follow>();
 
-    @OneToMany(mappedBy = "user")
-    List<TeamUser> groupUsers = new ArrayList<>();
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
@@ -94,9 +89,6 @@ public class User implements UserDetails{
         return true;
     }
 
-    public void setGroupUsers(List<TeamUser> groupUsers) {
-        this.groupUsers = groupUsers;
-    }
     @Builder
     public User(String password, String name, String picture, Integer age, String sex, Integer height,
                 Integer weight, String email, String profileState, String withdrawlState, List<String> roles){

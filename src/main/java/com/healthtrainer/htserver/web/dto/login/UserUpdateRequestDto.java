@@ -15,7 +15,6 @@ public class UserUpdateRequestDto {
     private String sex;
     private Integer height;
     private Integer weight;
-    private String email;
     private String picture;
     private boolean profileState;
 
@@ -26,7 +25,6 @@ public class UserUpdateRequestDto {
         this.sex = sex;
         this.height = height;
         this.weight = weight;
-        this.email = email;
         this.picture = picture;
         this.profileState = profileState;
     }
@@ -38,7 +36,6 @@ public class UserUpdateRequestDto {
                 .sex(sex)
                 .height(height)
                 .weight(weight)
-                .email(email)
                 .profileState(toProfileState(profileState))
                 .build();
     }

@@ -15,6 +15,7 @@ public class UserFindResponseDto {
     private Integer height;
     private Integer weight;
     private String email;
+    private String picture;
     private boolean profileState;
 
     public UserFindResponseDto(User entity) {
@@ -24,6 +25,7 @@ public class UserFindResponseDto {
         this.height = entity.getHeight();
         this.weight = entity.getWeight();
         this.email = entity.getEmail();
+        this.picture = entity.getPicture();
         this.profileState = toProfileState(entity.getProfileState());
     }
 

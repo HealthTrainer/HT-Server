@@ -65,7 +65,7 @@ public class UserService {
                     if(storageService.delete(user.getPicture()))
                         user.setPicture(null);
                 }
-                String path = "/profile_" + me.getEmail();
+                String path = "/profile_" + me.getId();
                 String storeUrl = storageService.store(path, file);
                 user.setPicture(storeUrl);
             } else {

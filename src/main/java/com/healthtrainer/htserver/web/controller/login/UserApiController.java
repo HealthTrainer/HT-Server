@@ -23,7 +23,7 @@ public class UserApiController {
 //        return userService.createUser(request, requestDto);
 //    }
 
-    @PostMapping("/user/profile/me")
+    @PostMapping("/users/profile/me")
     public ResponseDto updateUser(ServletRequest request, @ModelAttribute UserUpdateRequestDto requestDto, @RequestParam(value = "file", required = false) MultipartFile file) throws Exception {
         return userService.updateUser(request, requestDto, file);
     }

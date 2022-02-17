@@ -5,10 +5,13 @@ import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.login.UserCreateRequestDto;
 import com.healthtrainer.htserver.web.dto.login.UserUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletRequest;
+import java.net.MalformedURLException;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
@@ -39,6 +42,11 @@ public class UserApiController {
     @GetMapping("/users/profile/me")
     public ResponseDto findMe(ServletRequest request) {
         return userService.findMe(request);
+    }
+
+    @GetMapping("/users/{userId}/profile/pic")
+    public ResponseEntity<Resource> display(@PathVariable Long userId) throws Exception {
+        return userService.display(userId);
     }
 
     //유저 정보 값 받아오기

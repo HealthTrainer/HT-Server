@@ -12,6 +12,8 @@ import com.healthtrainer.htserver.web.dto.login.UserResponseDto;
 import com.healthtrainer.htserver.web.dto.login.UserUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -109,5 +111,27 @@ public class UserService {
         User user = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         return new ResponseDto("SUCCESS",user.getId());
+    }
+
+    public ResponseEntity<Resource> display(Long userId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원 입니다. id=" + userId));
+
+        Resource resource = null;
+        try {
+            String filePath = user.getPicture();
+            resource = storageService.load(filePath);
+            String contentDisposition = "attachment; filename=\""+ "profile_" +
+                    user.getId() + filePath.substring(filePath.lastIndexOf(".")) + "\"";
+//            String contentDisposition = "inline";
+            return ResponseEntity.ok()
+                    .body(resource);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Fail to load profile pic");
+        }
+
     }
 }

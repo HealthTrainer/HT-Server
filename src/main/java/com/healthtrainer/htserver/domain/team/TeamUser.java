@@ -1,6 +1,7 @@
-package com.healthtrainer.htserver.domain.group;
+package com.healthtrainer.htserver.domain.team;
 
 import com.healthtrainer.htserver.domain.register.User;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -25,4 +26,11 @@ public class TeamUser {
 
     @Column(name = "grade")
     private String grade;
+
+    @Builder
+    public TeamUser(Team team, User user, String grade){
+        this.team = team;
+        this.user = user;
+        this.grade = grade;
+    }
 }

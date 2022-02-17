@@ -1,5 +1,5 @@
 
-package com.healthtrainer.htserver.domain.group;
+package com.healthtrainer.htserver.domain.team;
 
 import lombok.Getter;
 
@@ -15,7 +15,7 @@ public class Team{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "team_id")
-    private Long groupId;
+    private Long teamId;
 
     @Column(name = "name")
     private String teamName;
@@ -48,7 +48,4 @@ public class Team{
         this.teamPassword = teamPassword;
     }
 
-    public void setTeamUsers(List<TeamUser> teamUsers) {
-        this.teamUsers = teamUsers;
-    }
 }

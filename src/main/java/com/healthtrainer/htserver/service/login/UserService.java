@@ -13,6 +13,8 @@ import com.healthtrainer.htserver.web.dto.login.UserUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -113,7 +115,14 @@ public class UserService {
         return new ResponseDto("SUCCESS",user.getId());
     }
 
-    public ResponseEntity<Resource> display(Long userId) throws Exception {
+    public Resource display(Long userId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원 입니다. id=" + userId));
+
+        return new UrlResource("file:" + user.getPicture());
+    }
+
+    public ResponseEntity<Resource> download(Long userId) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원 입니다. id=" + userId));
 
@@ -123,10 +132,9 @@ public class UserService {
             resource = storageService.load(filePath);
             String contentDisposition = "attachment; filename=\""+ "profile_" +
                     user.getId() + filePath.substring(filePath.lastIndexOf(".")) + "\"";
-//            String contentDisposition = "inline";
             return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
                     .body(resource);
-
 
         } catch (Exception e) {
             e.printStackTrace();

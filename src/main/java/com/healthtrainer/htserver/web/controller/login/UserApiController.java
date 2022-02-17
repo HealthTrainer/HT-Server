@@ -44,9 +44,16 @@ public class UserApiController {
         return userService.findMe(request);
     }
 
+    //유저 프로필 사진로딩
     @GetMapping("/users/{userId}/profile/pic")
-    public ResponseEntity<Resource> display(@PathVariable Long userId) throws Exception {
+    public Resource display(@PathVariable Long userId) throws Exception {
         return userService.display(userId);
+    }
+
+    //유저 프로필 사진다운(개발용)
+    @GetMapping("/users/{userId}/profile/download")
+    public ResponseEntity<Resource> download(@PathVariable Long userId) throws Exception {
+        return userService.download(userId);
     }
 
     //유저 정보 값 받아오기

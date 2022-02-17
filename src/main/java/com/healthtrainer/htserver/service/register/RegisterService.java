@@ -31,8 +31,6 @@ public class RegisterService {
     private final UserDetailsService userDetailsService;
 
     @Transactional
-    public ResponseDto signUp(RegisterDto loginRequestDto){
-        userRepository.save(User.builder()
     public ResponseDto signUp(RegisterDto loginRequestDto, MultipartFile file) throws Exception {
         User user = userRepository.save(User.builder()
                     .password(passwordEncoder.encode(loginRequestDto.getPassword()))

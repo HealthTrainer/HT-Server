@@ -1,5 +1,6 @@
 package com.healthtrainer.htserver.service.register;
 
+import com.healthtrainer.htserver.config.JwtAuthenticationProvider;
 import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.domain.register.UserRepository;
 import com.healthtrainer.htserver.service.storage.StorageService;
@@ -8,11 +9,14 @@ import com.healthtrainer.htserver.web.dto.login.UserResponseDto;
 import com.healthtrainer.htserver.web.dto.register.RegisterDto;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 @Service
@@ -23,8 +27,12 @@ public class RegisterService {
     private final StorageService storageService;
     private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
+    private final UserDetailsService userDetailsService;
 
     @Transactional
+    public ResponseDto signUp(RegisterDto loginRequestDto){
+        userRepository.save(User.builder()
     public ResponseDto signUp(RegisterDto loginRequestDto, MultipartFile file) throws Exception {
         User user = userRepository.save(User.builder()
                     .password(passwordEncoder.encode(loginRequestDto.getPassword()))
@@ -57,5 +65,13 @@ public class RegisterService {
             return new ResponseDto("SUCCESS","가입 가능한 이메일입니다.");
         }
         return new ResponseDto("FAIL", "이메일이 중복됩니다.");
+    }
+
+    public ResponseDto signOut(ServletRequest request) {
+        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
+        User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
+
+        userRepository.delete(me);
+        return new ResponseDto("SUCCESS",me.getId());
     }
 }

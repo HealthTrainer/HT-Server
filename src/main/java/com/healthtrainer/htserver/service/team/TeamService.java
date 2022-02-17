@@ -9,6 +9,7 @@ import com.healthtrainer.htserver.domain.team.TeamUser;
 import com.healthtrainer.htserver.domain.team.TeamUserRepository;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.team.CreateTeamRequestDto;
+import com.healthtrainer.htserver.web.dto.team.TeamResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,5 +63,19 @@ public class TeamService {
         }
 
         return new ResponseDto("SUCCESS",teamId);
+    }
+
+    public ResponseDto selectAllTeamByKeyword(ServletRequest request, String keyword) {
+        List<Team> teams = teamRepository.findAllByKeyword(keyword);
+        List<TeamResponseDto> forReturn = new ArrayList<>();
+
+        for(Team t : teams){
+            TeamResponseDto temp = new TeamResponseDto();
+            temp.setTeamName(t.getTeamName());
+            temp.setTeamId(t.getTeamId());
+            forReturn.add(temp);
+        }
+
+        return new ResponseDto("SUCCESS",forReturn);
     }
 }

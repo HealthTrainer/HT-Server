@@ -26,4 +26,10 @@ public class TeamApiController {
     public ResponseDto deleteTeamByTeamName(ServletRequest request, @PathVariable Long teamId){
         return teamService.deleteTeam(request, teamId);
     }
+
+    @GetMapping("/users/team/{keyword}")
+    @ResponseBody
+    public ResponseDto selectAllTeamByKeyword(ServletRequest request, @PathVariable String keyword){
+        return teamService.selectAllTeamByKeyword(request, keyword);
+    }
 }

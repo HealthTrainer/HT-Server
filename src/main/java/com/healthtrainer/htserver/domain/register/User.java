@@ -113,4 +113,8 @@ public class User implements UserDetails{
         this.weight = entity.getWeight();
         this.profileState = entity.getProfileState();
     }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 }

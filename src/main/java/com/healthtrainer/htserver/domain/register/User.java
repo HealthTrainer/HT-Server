@@ -114,4 +114,8 @@ public class User implements UserDetails{
         this.email = entity.getEmail();
         this.profileState = entity.getProfileState();
     }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
 }

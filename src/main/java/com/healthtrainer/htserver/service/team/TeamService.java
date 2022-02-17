@@ -54,13 +54,13 @@ public class TeamService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
 
-        teamRepository.delete(team); // 팀 삭제
-
-        List<TeamUser> teamUsers = teamUserRepository.findByTeam(teamId);
+        List<TeamUser> teamUsers = teamUserRepository.findByTeam(team);
         for(TeamUser t : teamUsers){
             teamUserRepository.delete(t);
-            // team_user 테이블에 속해있는 팀원들 삭제
+            // team_user 테이블에 속해있는 팀원들 삭제(외래키 참조 무결성때문에 먼저), 이 부분 기술블로그 작성
         }
+
+        teamRepository.delete(team); // 팀 삭제(이후 팀 삭제)
 
         return new ResponseDto("SUCCESS",teamId);
     }
@@ -77,5 +77,23 @@ public class TeamService {
         }
 
         return new ResponseDto("SUCCESS",forReturn);
+    }
+
+    public ResponseDto joinTeam(ServletRequest request, Long teamId) {
+        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
+        User me = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+        // 가입하려는 팀 찾음
+
+        TeamUser teamUser = new TeamUser(team, me, "member");
+        // 팀 가입
+
+        teamUserRepository.save(teamUser);
+        // 팀 저장
+
+        return new ResponseDto("SUCCESS",teamId);
+        // 가입한 팀의 id 값 반환
     }
 }

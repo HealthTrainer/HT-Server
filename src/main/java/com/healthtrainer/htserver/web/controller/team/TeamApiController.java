@@ -16,20 +16,26 @@ public class TeamApiController {
     private final TeamService teamService;
 
     @PostMapping("/users/team")
-    @ResponseBody
+    @ResponseBody // 팀 생성
     public ResponseDto addTeam(ServletRequest request, @RequestBody CreateTeamRequestDto requestTeamDto){
         return teamService.addTeam(request, requestTeamDto);
     }
 
     @DeleteMapping("/users/team/{teamId}")
-    @ResponseBody
+    @ResponseBody // 팀 삭제
     public ResponseDto deleteTeamByTeamName(ServletRequest request, @PathVariable Long teamId){
         return teamService.deleteTeam(request, teamId);
     }
 
     @GetMapping("/users/team/{keyword}")
-    @ResponseBody
+    @ResponseBody // "keyword"를 통해서 팀 전체 조회
     public ResponseDto selectAllTeamByKeyword(ServletRequest request, @PathVariable String keyword){
         return teamService.selectAllTeamByKeyword(request, keyword);
+    }
+
+    @PostMapping("/users/team/{teamId}/join")
+    @ResponseBody // 팀 가입
+    public ResponseDto joinTeam(ServletRequest request, @PathVariable Long teamId){
+        return teamService.joinTeam(request, teamId);
     }
 }

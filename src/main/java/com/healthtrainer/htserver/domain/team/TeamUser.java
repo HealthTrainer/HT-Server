@@ -3,11 +3,13 @@ package com.healthtrainer.htserver.domain.team;
 import com.healthtrainer.htserver.domain.register.User;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "team_user")
+@NoArgsConstructor
 @Getter
 public class TeamUser {
 

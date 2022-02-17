@@ -40,4 +40,10 @@ public class UserApiController {
     public ResponseDto findMe(ServletRequest request) {
         return userService.findMe(request);
     }
+
+    //유저 정보 값 받아오기
+    @GetMapping("/auth/check")
+    public ResponseDto check(ServletRequest request) {
+        return userService.check(request);
+    }
 }

@@ -15,17 +15,15 @@ public class UserCreateRequestDto {
     private String sex;
     private Integer height;
     private Integer weight;
-    private String email;
     private boolean profileState;
 
     @Builder
-    public UserCreateRequestDto(String name, Integer age, String sex, Integer height, Integer weight, String email, boolean profileState) {
+    public UserCreateRequestDto(String name, Integer age, String sex, Integer height, Integer weight, boolean profileState) {
         this.name = name;
         this.age = age;
         this.sex = sex;
         this.height = height;
         this.weight = weight;
-        this.email = email;
         this.profileState = profileState;
     }
 
@@ -36,7 +34,6 @@ public class UserCreateRequestDto {
                 .sex(sex)
                 .height(height)
                 .weight(weight)
-                .email(email)
                 .profileState(toProfileState(profileState))
                 .build();
     }

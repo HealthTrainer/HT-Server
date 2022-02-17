@@ -111,7 +111,6 @@ public class User implements UserDetails{
         this.sex = entity.getSex();
         this.height = entity.getHeight();
         this.weight = entity.getWeight();
-        this.email = entity.getEmail();
         this.profileState = entity.getProfileState();
     }
 

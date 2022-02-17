@@ -9,9 +9,11 @@ import com.healthtrainer.htserver.domain.team.TeamUser;
 import com.healthtrainer.htserver.domain.team.TeamUserRepository;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.team.CreateTeamRequestDto;
+import com.healthtrainer.htserver.web.dto.team.JoinTeamRequestDto;
 import com.healthtrainer.htserver.web.dto.team.TeamResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -79,7 +81,8 @@ public class TeamService {
         return new ResponseDto("SUCCESS",forReturn);
     }
 
-    public ResponseDto joinTeam(ServletRequest request, Long teamId) {
+    public ResponseDto joinTeam(ServletRequest request, Long teamId, JoinTeamRequestDto
+                                joinTeamRequestDto) {
         String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
         User me = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
@@ -87,13 +90,28 @@ public class TeamService {
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
         // 가입하려는 팀 찾음
 
-        TeamUser teamUser = new TeamUser(team, me, "member");
-        // 팀 가입
+        if(teamUserRepository.countByTeam(team)>=team.getTeamNumber()){ // 팀의 인원 수가 다 찾는지 확인
+            return new ResponseDto("FAIL","팀의 인원이 다 찼습니다");
+        }
 
-        teamUserRepository.save(teamUser);
-        // 팀 저장
+        if(team.getTeamState().equals("Y")){ // 비밀번호가 있을 경우
+            System.out.println(team.getTeamPassword());
+            System.out.println(joinTeamRequestDto.getPassword());
 
-        return new ResponseDto("SUCCESS",teamId);
-        // 가입한 팀의 id 값 반환
+            if(team.getTeamPassword().equals(joinTeamRequestDto.getPassword())) { // 비밀번호가 참
+                System.out.println(team.getTeamPassword());
+                System.out.println(joinTeamRequestDto.getPassword());
+
+                TeamUser teamUser = new TeamUser(team, me, "member");
+                teamUserRepository.save(teamUser);
+                // 팀 가입 및 DB에 저장
+
+                return new ResponseDto("SUCCESS",teamId);
+                // 가입한 팀의 id 값 반환
+            }
+        }
+
+        return new ResponseDto("FAIL","비밀번호가 틀렸습니다.");
+        // 비밀번호가 틀렸을 경우
     }
 }

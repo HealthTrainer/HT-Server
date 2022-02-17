@@ -3,6 +3,7 @@ package com.healthtrainer.htserver.web.controller.team;
 import com.healthtrainer.htserver.service.team.TeamService;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.team.CreateTeamRequestDto;
+import com.healthtrainer.htserver.web.dto.team.JoinTeamRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,8 @@ public class TeamApiController {
 
     @PostMapping("/users/team/{teamId}/join")
     @ResponseBody // 팀 가입
-    public ResponseDto joinTeam(ServletRequest request, @PathVariable Long teamId){
-        return teamService.joinTeam(request, teamId);
+    public ResponseDto joinTeam(ServletRequest request, @PathVariable Long teamId,
+                                @RequestBody JoinTeamRequestDto joinTeamRequestDto){
+        return teamService.joinTeam(request, teamId, joinTeamRequestDto);
     }
 }

@@ -56,7 +56,7 @@ public class TeamService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
 
-        List<TeamUser> teamUsers = teamUserRepository.findByTeam(team);
+        List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
         for(TeamUser t : teamUsers){
             teamUserRepository.delete(t);
             // team_user 테이블에 속해있는 팀원들 삭제(외래키 참조 무결성때문에 먼저), 이 부분 기술블로그 작성
@@ -113,5 +113,19 @@ public class TeamService {
 
         return new ResponseDto("FAIL","비밀번호가 틀렸습니다.");
         // 비밀번호가 틀렸을 경우
+    }
+
+    public ResponseDto withdrawTeam(ServletRequest request, Long teamId) {
+        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
+        User me = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
+
+        Team team = teamRepository.findById(teamId)
+                        .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+
+        TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, me);
+
+        teamUserRepository.delete(teamUser);
+
+        return new ResponseDto("SUCCESS", teamId);
     }
 }

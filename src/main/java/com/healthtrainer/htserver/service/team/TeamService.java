@@ -2,18 +2,22 @@ package com.healthtrainer.htserver.service.team;
 
 import com.healthtrainer.htserver.config.CustomUserDetailService;
 import com.healthtrainer.htserver.config.JwtAuthenticationProvider;
+import com.healthtrainer.htserver.domain.calendar.Calendar;
+import com.healthtrainer.htserver.domain.calendar.CalendarRepository;
 import com.healthtrainer.htserver.domain.register.User;
+import com.healthtrainer.htserver.domain.register.UserRepository;
 import com.healthtrainer.htserver.domain.team.Team;
 import com.healthtrainer.htserver.domain.team.TeamRepository;
 import com.healthtrainer.htserver.domain.team.TeamUser;
 import com.healthtrainer.htserver.domain.team.TeamUserRepository;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
+import com.healthtrainer.htserver.web.dto.calendar.CalendarTimeResponseDto;
 import com.healthtrainer.htserver.web.dto.team.CreateTeamRequestDto;
 import com.healthtrainer.htserver.web.dto.team.JoinTeamRequestDto;
+import com.healthtrainer.htserver.web.dto.team.MemberTimeResponseDto;
 import com.healthtrainer.htserver.web.dto.team.TeamResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +33,9 @@ public class TeamService {
 
     private final TeamRepository teamRepository;
     private final TeamUserRepository teamUserRepository;
+
+    private final CalendarRepository calendarRepository;
+    private final UserRepository userRepository;
 
     public ResponseDto addTeam(ServletRequest request, CreateTeamRequestDto requestTeamDto) {
         String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
@@ -127,5 +134,39 @@ public class TeamService {
         teamUserRepository.delete(teamUser);
 
         return new ResponseDto("SUCCESS", teamId);
+    }
+
+    public ResponseDto selectTimeAllMember(Long teamId) {
+
+        List<MemberTimeResponseDto> forReturn = new ArrayList<>();
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+
+        List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
+
+        for(TeamUser t : teamUsers) {
+
+            List<Calendar> calendars = calendarRepository.findAllById(t.getUser().getId());
+            MemberTimeResponseDto temp1 = new MemberTimeResponseDto();
+            List<CalendarTimeResponseDto> temp2 = new ArrayList<>();
+
+            for (Calendar c : calendars) {
+                CalendarTimeResponseDto temp3 = new CalendarTimeResponseDto();
+                temp3.setTime(c.getTime());
+                temp3.setDate(c.getDate());
+
+                temp2.add(temp3);
+            }
+            temp1.setCalendarTimeResponseDtoList(temp2);
+
+            User user = userRepository.findById(t.getUser().getId())
+                    .orElseThrow(()->new IllegalArgumentException("존재하지 않는 유저입니다. id=" + t.getUser().getId()));
+
+            temp1.setName(user.getName());
+            forReturn.add(temp1);
+        }
+
+        return new ResponseDto("SUCCESS",forReturn);
     }
 }

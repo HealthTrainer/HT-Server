@@ -29,5 +29,10 @@ public class TeamMemberApiController {
         return teamService.selectTimeAllMember(teamId);
     }
 
+    @ResponseBody
+    @GetMapping("/users/team/{teamId}/member/history") // 팀원들의 운동내역 조회
+    public ResponseDto selectExerciseHistoryAllMember(@PathVariable Long teamId){
+        return teamService.selectExerciseHistoryAllMember(teamId);
+    }
 
 }

@@ -10,6 +10,7 @@ import com.healthtrainer.htserver.domain.register.UserRepository;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.exercise.ExerciseDto;
 import com.healthtrainer.htserver.web.dto.exercise.FindExerciseListDto;
+import com.healthtrainer.htserver.web.dto.exercise.PutExerciseListRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -103,5 +104,25 @@ public class ExerciseListService {
 
         }
         return new ResponseDto("SUCCESS",forReturn);
+    }
+
+    public ResponseDto changeExerciseList(ServletRequest request, String title,
+                                          PutExerciseListRequestDto exerciseRequestDto) {
+        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
+        User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
+
+        ExerciseList exerciseList = exerciseListRepository.findByUserAndTitle(me,title);
+
+        if(!exerciseList.getTitle().equals(exerciseRequestDto.getTitle())){
+            exerciseList.seteListTitle(exerciseRequestDto.getTitle());
+            exerciseListRepository.save(exerciseList);
+        }
+
+        if(!exerciseList.getEListTime().equals(exerciseRequestDto.getTitle())){
+            exerciseList.seteListTime(exerciseRequestDto.getTime());
+            exerciseListRepository.save(exerciseList);
+        }
+
+        return new ResponseDto("SUCCESS",exerciseList.getEListId());
     }
 }

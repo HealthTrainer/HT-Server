@@ -106,6 +106,7 @@ public class ExerciseListService {
         return new ResponseDto("SUCCESS",forReturn);
     }
 
+    @Transactional
     public ResponseDto changeExerciseList(ServletRequest request, String title,
                                           PutExerciseListRequestDto exerciseRequestDto) {
         String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);

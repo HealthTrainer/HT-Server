@@ -3,6 +3,8 @@ package com.healthtrainer.htserver.service.team;
 import com.healthtrainer.htserver.config.CustomUserDetailService;
 import com.healthtrainer.htserver.config.JwtAuthenticationProvider;
 import com.healthtrainer.htserver.domain.calendar.Calendar;
+import com.healthtrainer.htserver.domain.calendar.CalendarHistory;
+import com.healthtrainer.htserver.domain.calendar.CalendarHistoryRepository;
 import com.healthtrainer.htserver.domain.calendar.CalendarRepository;
 import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.domain.register.UserRepository;
@@ -11,11 +13,10 @@ import com.healthtrainer.htserver.domain.team.TeamRepository;
 import com.healthtrainer.htserver.domain.team.TeamUser;
 import com.healthtrainer.htserver.domain.team.TeamUserRepository;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
+import com.healthtrainer.htserver.web.dto.calendar.CalendarHistoryAllResponseDto;
+import com.healthtrainer.htserver.web.dto.calendar.CalendarHistoryResponseDto;
 import com.healthtrainer.htserver.web.dto.calendar.CalendarTimeResponseDto;
-import com.healthtrainer.htserver.web.dto.team.CreateTeamRequestDto;
-import com.healthtrainer.htserver.web.dto.team.JoinTeamRequestDto;
-import com.healthtrainer.htserver.web.dto.team.MemberTimeResponseDto;
-import com.healthtrainer.htserver.web.dto.team.TeamResponseDto;
+import com.healthtrainer.htserver.web.dto.team.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class TeamService {
     private final TeamUserRepository teamUserRepository;
 
     private final CalendarRepository calendarRepository;
+    private final CalendarHistoryRepository calendarHistoryRepository;
     private final UserRepository userRepository;
 
     public ResponseDto addTeam(ServletRequest request, CreateTeamRequestDto requestTeamDto) {
@@ -164,6 +166,49 @@ public class TeamService {
                     .orElseThrow(()->new IllegalArgumentException("존재하지 않는 유저입니다. id=" + t.getUser().getId()));
 
             temp1.setName(user.getName());
+            forReturn.add(temp1);
+        }
+
+        return new ResponseDto("SUCCESS",forReturn);
+    }
+
+    public ResponseDto selectExerciseHistoryAllMember(Long teamId) {
+
+        List<AllTeamMemberHistoryResponseDto> forReturn = new ArrayList<>();
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+
+        List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
+
+        for(TeamUser t : teamUsers){
+            AllTeamMemberHistoryResponseDto temp1 = new AllTeamMemberHistoryResponseDto();
+            temp1.setName(t.getUser().getName());
+            List<CalendarHistoryAllResponseDto> temp2 = new ArrayList<>();
+
+            List<Calendar> calendars = calendarRepository.findAllById(t.getUser().getId());
+
+            for(Calendar c1 : calendars){
+                CalendarHistoryAllResponseDto temp3 = new CalendarHistoryAllResponseDto();
+                temp3.setDate(c1.getDate());
+                temp3.setColor(c1.getColor());
+                List<CalendarHistoryResponseDto> temp4 = new ArrayList<>();
+
+                List<CalendarHistory> calendarHistories = calendarHistoryRepository.findAllByCalendar(c1);
+
+                for(CalendarHistory c2 : calendarHistories){
+                    CalendarHistoryResponseDto temp5 = new CalendarHistoryResponseDto();
+                    temp5.setName(c2.getExerciseName());
+                    temp5.setType(c2.getExerciseType());
+                    temp5.setCounter(c2.getExerciseCount());
+                    temp5.setSet(c2.getExerciseSet());
+                    temp5.setTime(c2.getExerciseTime());
+                    temp4.add(temp5);
+                }
+                temp3.setCalendarHistoryResponseDtos(temp4);
+                temp2.add(temp3);
+            }
+            temp1.setCalendarHistoryAllResponseDtoList(temp2);
             forReturn.add(temp1);
         }
 

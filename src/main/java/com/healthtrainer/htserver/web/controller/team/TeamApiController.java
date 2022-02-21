@@ -40,4 +40,10 @@ public class TeamApiController {
                                 @RequestBody JoinTeamRequestDto joinTeamRequestDto){
         return teamService.joinTeam(request, teamId, joinTeamRequestDto);
     }
+
+    @GetMapping("/users/team/{teamId}/get")
+    @ResponseBody
+    public ResponseDto selectTeamMember(@PathVariable Long teamId){
+        return teamService.selectTeamMember(teamId);
+    }
 }

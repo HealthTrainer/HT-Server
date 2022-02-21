@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +65,7 @@ public class TeamService {
         User me = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
 
         List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
         for(TeamUser t : teamUsers){
@@ -96,7 +98,7 @@ public class TeamService {
         User me = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
         // 가입하려는 팀 찾음
 
         if(teamUserRepository.countByTeam(team)>=team.getTeamNumber()){ // 팀의 인원 수가 다 찾는지 확인
@@ -129,7 +131,7 @@ public class TeamService {
         User me = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         Team team = teamRepository.findById(teamId)
-                        .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+                        .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
 
         TeamUser teamUser = teamUserRepository.findByTeamAndUser(team, me);
 
@@ -143,7 +145,7 @@ public class TeamService {
         List<MemberTimeResponseDto> forReturn = new ArrayList<>();
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
 
         List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
 
@@ -177,7 +179,7 @@ public class TeamService {
         List<AllTeamMemberHistoryResponseDto> forReturn = new ArrayList<>();
 
         Team team = teamRepository.findById(teamId)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. id=" + teamId));
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
 
         List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
 
@@ -212,6 +214,30 @@ public class TeamService {
             forReturn.add(temp1);
         }
 
+        return new ResponseDto("SUCCESS",forReturn);
+    }
+
+    public ResponseDto selectTeamMember(Long teamId) {
+        SelectAllTeamMemberResponseDto forReturn = new SelectAllTeamMemberResponseDto();
+
+        Team team = teamRepository.findById(teamId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
+
+        forReturn.setTeamId(team.getTeamId());
+        forReturn.setTeamName(team.getTeamName());
+
+        List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
+
+        List<SelectTeamMemberResponseDto> temp1 = new ArrayList<>();
+        for(TeamUser t : teamUsers){
+            SelectTeamMemberResponseDto temp2 = new SelectTeamMemberResponseDto();
+            temp2.setId(t.getUser().getId());
+            temp2.setName(t.getUser().getName());
+
+            temp1.add(temp2);
+        }
+
+        forReturn.setUserList(temp1);
         return new ResponseDto("SUCCESS",forReturn);
     }
 }

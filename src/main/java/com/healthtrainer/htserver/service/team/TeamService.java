@@ -109,7 +109,7 @@ public class TeamService {
             System.out.println(team.getTeamPassword());
             System.out.println(joinTeamRequestDto.getPassword());
 
-            if(team.getTeamPassword().equals(joinTeamRequestDto.getPassword())) { // 비밀번호가 참
+            if(team.getTeamPassword().equals(joinTeamRequestDto.getPassword())) { // 비밀번호가 맞을 경우
                 System.out.println(team.getTeamPassword());
                 System.out.println(joinTeamRequestDto.getPassword());
 
@@ -120,6 +120,15 @@ public class TeamService {
                 return new ResponseDto("SUCCESS",teamId);
                 // 가입한 팀의 id 값 반환
             }
+        }
+
+        else if(team.getTeamState().equals("N")){
+            TeamUser teamUser = new TeamUser(team, me, "member");
+            teamUserRepository.save(teamUser);
+            // 팀 가입 및 DB에 저장
+
+            return new ResponseDto("SUCCESS",teamId);
+            // 가입한 팀의 id 값 반환
         }
 
         return new ResponseDto("FAIL","비밀번호가 틀렸습니다.");
@@ -217,27 +226,31 @@ public class TeamService {
         return new ResponseDto("SUCCESS",forReturn);
     }
 
-    public ResponseDto selectTeamMember(Long teamId) {
-        SelectAllTeamMemberResponseDto forReturn = new SelectAllTeamMemberResponseDto();
+    public ResponseDto selectTeamMember(Long userId) {
+        List<SelectAllTeamMemberResponseDto> forReturn = new ArrayList<>();
 
-        Team team = teamRepository.findById(teamId)
-                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
+        User user = userRepository.findById(userId)
+            .orElseThrow(()->new IllegalArgumentException("존재하지 않는 유저입니다. userId=" + userId));
 
-        forReturn.setTeamId(team.getTeamId());
-        forReturn.setTeamName(team.getTeamName());
+        List<TeamUser> teamUsers = teamUserRepository.findAllByUser(user);
 
-        List<TeamUser> teamUsers = teamUserRepository.findAllByTeam(team);
+        for(TeamUser t1 : teamUsers){
+            SelectAllTeamMemberResponseDto temp1 = new SelectAllTeamMemberResponseDto();
+            temp1.setTeamId(t1.getTeam().getTeamId());
+            temp1.setTeamName(t1.getTeam().getTeamName());
 
-        List<SelectTeamMemberResponseDto> temp1 = new ArrayList<>();
-        for(TeamUser t : teamUsers){
-            SelectTeamMemberResponseDto temp2 = new SelectTeamMemberResponseDto();
-            temp2.setId(t.getUser().getId());
-            temp2.setName(t.getUser().getName());
+            List<TeamUser> temp2 = teamUserRepository.findAllByTeam(t1.getTeam());
+            List<SelectTeamMemberResponseDto> temp3 = new ArrayList<>();
+            for(TeamUser t2 : temp2){
+                SelectTeamMemberResponseDto temp4 = new SelectTeamMemberResponseDto();
+                temp4.setId(t2.getUser().getId());
+                temp4.setName(t2.getUser().getName());
 
-            temp1.add(temp2);
+                temp3.add(temp4);
+            }
+            temp1.setUserList(temp3);
+            forReturn.add(temp1);
         }
-
-        forReturn.setUserList(temp1);
         return new ResponseDto("SUCCESS",forReturn);
     }
 }

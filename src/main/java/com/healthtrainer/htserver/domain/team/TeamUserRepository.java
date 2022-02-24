@@ -11,4 +11,6 @@ public interface TeamUserRepository extends JpaRepository<TeamUser,Long> {
     TeamUser findByTeamAndUser(Team team, User user);
 
     Integer countByTeam(Team team);
+
+    List<TeamUser> findAllByUser(User user);
 }

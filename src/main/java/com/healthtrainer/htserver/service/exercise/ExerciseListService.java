@@ -50,6 +50,14 @@ public class ExerciseListService {
         User me = (User) userDetailsService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         ExerciseList exerciseList = exerciseListRepository.findByUserAndTitle(me,title);
+
+        List<ExerciseHistory> exerciseHistoryList = exerciseHistoryRepository.findAllByExerciseList(exerciseList);
+
+        for(ExerciseHistory e : exerciseHistoryList){
+            exerciseHistoryRepository.delete(e);
+            // "deleteAll로 Refactoring 가능"
+        }
+
         exerciseListRepository.delete(exerciseList);
 
         return new ResponseDto("SUCCESS",exerciseList.getEListId());

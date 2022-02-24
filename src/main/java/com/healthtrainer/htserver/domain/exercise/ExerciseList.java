@@ -2,15 +2,17 @@ package com.healthtrainer.htserver.domain.exercise;
 
 import com.healthtrainer.htserver.domain.register.User;
 import lombok.Getter;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Getter
-@Table(name = "e_list")
 @Entity
+@Table(name = "e_list")
 @EntityListeners(AuditingEntityListener.class) // @CreatedDate를 사용하기 위한 어노테이션
+@DynamicUpdate
+@Getter
 public class ExerciseList {
 
     @Id

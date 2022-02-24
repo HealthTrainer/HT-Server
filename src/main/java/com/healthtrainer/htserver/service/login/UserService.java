@@ -4,12 +4,20 @@ import com.healthtrainer.htserver.config.CustomUserDetailService;
 import com.healthtrainer.htserver.config.JwtAuthenticationProvider;
 import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.domain.register.UserRepository;
+import com.healthtrainer.htserver.service.storage.StorageService;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.login.UserCreateRequestDto;
 import com.healthtrainer.htserver.web.dto.login.UserFindResponseDto;
 import com.healthtrainer.htserver.web.dto.login.UserResponseDto;
+import com.healthtrainer.htserver.web.dto.login.UserUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +27,8 @@ import javax.transaction.Transactional;
 @Service
 public class UserService {
 
+    @Qualifier("FileStorageService")
+    private final StorageService storageService;
     private final UserRepository userRepository;
     private final JwtAuthenticationProvider jwtAuthenticationProvider;
     private final CustomUserDetailService userDetailService;
@@ -41,6 +51,36 @@ public class UserService {
             UserResponseDto responseDto = new UserResponseDto(user1);
             return new ResponseDto("SUCCESS", responseDto);
         }
+    }
+
+    @Transactional
+    public ResponseDto updateUser(ServletRequest request, UserUpdateRequestDto requestDto, MultipartFile file) throws Exception {
+        String token = jwtAuthenticationProvider.resolveToken((HttpServletRequest) request);
+        User user = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
+
+        if (user == null) {
+            return new ResponseDto("FAIL");
+        } else {
+            User me = userRepository.findById(user.getId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원 입니다. id=" + user.getId()));
+
+            if (file != null) {
+                if (user.getPicture() != null) {
+                    if(storageService.delete(user.getPicture()))
+                        user.setPicture(null);
+                }
+                String path = "/profile_" + me.getId();
+                String storeUrl = storageService.store(path, file);
+                user.setPicture(storeUrl);
+            } else {
+                if (requestDto.getPicture() == null)
+                    user.setPicture(null);
+            }
+
+            user.update(requestDto.toEntity());
+        }
+        UserResponseDto responseDto = new UserResponseDto(user);
+        return new ResponseDto("SUCCESS", responseDto);
     }
 
     public ResponseDto findUser(Long userId) {
@@ -73,5 +113,33 @@ public class UserService {
         User user = (User) userDetailService.loadUserByUsername(jwtAuthenticationProvider.getUserPk(token));
 
         return new ResponseDto("SUCCESS",user.getId());
+    }
+
+    public Resource display(Long userId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원 입니다. id=" + userId));
+
+        return new UrlResource("file:" + user.getPicture());
+    }
+
+    public ResponseEntity<Resource> download(Long userId) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new IllegalArgumentException("존재하지 않는 회원 입니다. id=" + userId));
+
+        Resource resource = null;
+        try {
+            String filePath = user.getPicture();
+            resource = storageService.load(filePath);
+            String contentDisposition = "attachment; filename=\""+ "profile_" +
+                    user.getId() + filePath.substring(filePath.lastIndexOf(".")) + "\"";
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                    .body(resource);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Fail to load profile pic");
+        }
+
     }
 }

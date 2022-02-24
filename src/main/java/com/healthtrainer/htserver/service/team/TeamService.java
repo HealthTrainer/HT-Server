@@ -86,6 +86,8 @@ public class TeamService {
             TeamResponseDto temp = new TeamResponseDto();
             temp.setTeamName(t.getTeamName());
             temp.setTeamId(t.getTeamId());
+            temp.setState(t.getTeamState());
+            temp.setTeamNumber(t.getTeamNumber());
             forReturn.add(temp);
         }
 
@@ -100,6 +102,11 @@ public class TeamService {
         Team team = teamRepository.findById(teamId)
                 .orElseThrow(()->new IllegalArgumentException("존재하지 않는 팀입니다. teamId=" + teamId));
         // 가입하려는 팀 찾음
+
+        if(teamUserRepository.findByTeamAndUser(team,me) != null){
+            return new ResponseDto("FAIL","이미 속한 그룹입니다.");
+            // 이미 팀에 속해있을 경우
+        }
 
         if(teamUserRepository.countByTeam(team)>=team.getTeamNumber()){ // 팀의 인원 수가 다 찾는지 확인
             return new ResponseDto("FAIL","팀의 인원이 다 찼습니다");

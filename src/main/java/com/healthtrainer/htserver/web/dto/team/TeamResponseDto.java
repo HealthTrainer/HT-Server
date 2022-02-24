@@ -8,4 +8,6 @@ import lombok.Setter;
 public class TeamResponseDto {
     private Long teamId;
     private String teamName;
+    private Integer teamNumber;
+    private String state;
 }

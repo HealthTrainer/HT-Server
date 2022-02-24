@@ -119,8 +119,16 @@ public class CalendarService {
                 else if(c2.getColor().equals("red")){ color_red = color_red + 1; }
             }
 
-            if(color_green >= color_red){ temp1.setColor("green"); }
-            else if(color_green < color_red){ temp1.setColor("red"); }
+            if(color_green >= color_red){
+                temp1.setColor("green");
+                c1.setColor("green");
+                calendarRepository.save(c1); // "JPA"는 "UPDATE" 기능이 "SAVE"에 포함
+            }
+            else if(color_green < color_red){
+                temp1.setColor("red");
+                c1.setColor("red");
+                calendarRepository.save(c1);
+            }
 
             temp1.setCalendarHistoryResponseDtos(temp2);
             color_green = 0;

@@ -1,5 +1,6 @@
 package com.healthtrainer.htserver.domain.register;
 import com.healthtrainer.htserver.domain.Follow.Follow;
+import com.healthtrainer.htserver.domain.team.TeamUser;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

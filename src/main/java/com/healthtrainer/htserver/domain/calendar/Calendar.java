@@ -24,6 +24,9 @@ public class Calendar {
     @Column(name = "time")
     private Integer time; // 운동한 시간
 
+    @Column(name = "color")
+    private String color; // 오늘의 color
+
     @Column(name = "userId")
     private Long id;
 
@@ -37,6 +40,10 @@ public class Calendar {
 
     public void setTime(Integer time){
         this.time = time;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 
     public void setExerciseList(ExerciseList exerciseList) {

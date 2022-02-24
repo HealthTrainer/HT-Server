@@ -1,10 +1,7 @@
 package com.healthtrainer.htserver.web.dto.register;
 
 import com.healthtrainer.htserver.domain.register.User;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -14,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class RegisterDto {
 
     private String password;
     private String name;
-    private String picture;
     private String sex;
     private Integer age;
     private Integer height;
@@ -32,7 +29,6 @@ public class RegisterDto {
         return User.builder()
                 .password(password)
                 .name(name)
-                .picture(picture)
                 .sex(sex)
                 .age(age)
                 .height(height)

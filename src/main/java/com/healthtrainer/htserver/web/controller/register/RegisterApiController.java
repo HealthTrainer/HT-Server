@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletRequest;
 
@@ -19,9 +20,9 @@ public class RegisterApiController {
 
     @PostMapping("/auth/sign-up") // 회원가입 처리
     @ResponseBody
-    public ResponseDto signUp(@RequestBody RegisterDto registerDto) { // 수신
+    public ResponseDto signUp(@ModelAttribute RegisterDto registerDto, @RequestParam(value = "file", required = false) MultipartFile file) throws Exception { // 수신
         log.info("email = {}, password = {}", registerDto.getEmail(), registerDto.getPassword());
-        return registerService.signUp(registerDto);
+        return registerService.signUp(registerDto, file);
     }
 
     @GetMapping("/auth/email")

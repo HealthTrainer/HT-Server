@@ -6,24 +6,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
-public class UserCreateRequestDto {
+public class UserUpdateRequestDto {
     private String name;
     private Integer age;
     private String sex;
     private Integer height;
     private Integer weight;
+    private String picture;
     private boolean profileState;
 
     @Builder
-    public UserCreateRequestDto(String name, Integer age, String sex, Integer height, Integer weight, boolean profileState) {
+    public UserUpdateRequestDto(String name, Integer age, String sex, Integer height, Integer weight, String email, String picture, boolean profileState) {
         this.name = name;
         this.age = age;
         this.sex = sex;
         this.height = height;
         this.weight = weight;
+        this.picture = picture;
         this.profileState = profileState;
     }
 

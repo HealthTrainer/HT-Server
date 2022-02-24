@@ -28,7 +28,7 @@ public class JwtAuthenticationProvider {
 
     private String secretKey = "dnlsxjtmxjeldnlsxjtmxjeldnlsxjtmxjeldnlsxjtmxjel";
 
-    private long tokenValidTime = 1000L * 60 * 60;
+    private long tokenValidTime = 1000L * 60 * 60 * 24 * 7;
 
     @Autowired
     private UserDetailsService userDetailsService;

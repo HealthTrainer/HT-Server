@@ -58,10 +58,6 @@ public class User implements UserDetails{
     @OneToMany(mappedBy = "user")
     private List<Follow> followings = new ArrayList<Follow>();
 
-    @OneToMany(mappedBy = "user")
-    List<TeamUser> groupUsers = new ArrayList<>();
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()
@@ -94,9 +90,6 @@ public class User implements UserDetails{
         return true;
     }
 
-    public void setGroupUsers(List<TeamUser> groupUsers) {
-        this.groupUsers = groupUsers;
-    }
     @Builder
     public User(String password, String name, String picture, Integer age, String sex, Integer height,
                 Integer weight, String email, String profileState, String withdrawlState, List<String> roles){
@@ -119,7 +112,10 @@ public class User implements UserDetails{
         this.sex = entity.getSex();
         this.height = entity.getHeight();
         this.weight = entity.getWeight();
-        this.email = entity.getEmail();
         this.profileState = entity.getProfileState();
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
     }
 }

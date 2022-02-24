@@ -3,8 +3,8 @@ package com.healthtrainer.htserver.web.controller.exercise;
 import com.healthtrainer.htserver.service.exercise.ExerciseListService;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.exercise.ExerciseDto;
+import com.healthtrainer.htserver.web.dto.exercise.PutExerciseListRequestDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +38,13 @@ public class ExerciseListApiController {
     @ResponseBody
     public ResponseDto selectAllExerciseListB(@PathVariable Long userId){
         return exerciseListService.selectAllExerciseList(userId);
+    }
+
+    @PutMapping("/users/workout-list/{title}") // 운동리스트 수정
+    @ResponseBody
+    public ResponseDto changeExerciseList(ServletRequest request, @PathVariable String title,
+                                          @RequestBody PutExerciseListRequestDto putExerciseRequestDto){
+        return exerciseListService.changeExerciseList(request, title, putExerciseRequestDto);
     }
 
 

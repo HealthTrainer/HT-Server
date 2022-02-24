@@ -9,7 +9,6 @@ import com.healthtrainer.htserver.domain.register.User;
 import com.healthtrainer.htserver.web.dto.ResponseDto;
 import com.healthtrainer.htserver.web.dto.exercise.ExerciseDto;
 import com.healthtrainer.htserver.web.dto.exercise.FindExerciseHistoryDto;
-import com.healthtrainer.htserver.web.dto.exercise.FindExerciseListDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;

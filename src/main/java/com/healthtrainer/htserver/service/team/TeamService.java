@@ -86,6 +86,8 @@ public class TeamService {
             TeamResponseDto temp = new TeamResponseDto();
             temp.setTeamName(t.getTeamName());
             temp.setTeamId(t.getTeamId());
+            temp.setState(t.getTeamState());
+            temp.setTeamNumber(t.getTeamNumber());
             forReturn.add(temp);
         }
 
